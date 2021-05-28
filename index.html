@@ -1,0 +1,869 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-search.css">
+        <link rel="stylesheet" href="css/filter.css">
+<link rel="stylesheet" href="css/nouislider.min.css">
+        <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title>mes cartes</title
+        
+        </head>
+    <body>
+        <H1>ZONES MINIERES DE LA REGION DE L'EST</H1>
+        <STYLe>
+        H1{text-align: center;}
+        </STYLe>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="js/leaflet-search.js"></script>
+        <script src="js/tailDT.js"></script>
+<script src="js/nouislider.min.js"></script>
+<script src="js/wNumb.js"></script>
+        <script src="data/regiondelest_1.js"></script>
+        <script src="data/zonneminiere_2.js"></script>
+        <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString') {
+              highlightLayer.setStyle({
+                color: '#ffff00',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: '#ffff00',
+                fillOpacity: 1
+              });
+            }
+            highlightLayer.openPopup();
+        }
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        }).fitBounds([[1.4421593326322428,8.309781748890792],[7.697714239416672,20.942897065960764]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        map.createPane('pane_OSMStandard_0');
+        map.getPane('pane_OSMStandard_0').style.zIndex = 400;
+        var layer_OSMStandard_0 = L.tileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            pane: 'pane_OSMStandard_0',
+            opacity: 1.0,
+            attribution: '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors, CC-BY-SA</a>',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 19
+        });
+        layer_OSMStandard_0;
+        map.addLayer(layer_OSMStandard_0);
+        function pop_regiondelest_1(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['OBJECTID'] !== null ? autolinker.link(feature.properties['OBJECTID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SCE_GEO'] !== null ? autolinker.link(feature.properties['SCE_GEO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SCE_SEM'] !== null ? autolinker.link(feature.properties['SCE_SEM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['DATE_'] !== null ? autolinker.link(feature.properties['DATE_'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ORIGINE'] !== null ? autolinker.link(feature.properties['ORIGINE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SUPERFICIE'] !== null ? autolinker.link(feature.properties['SUPERFICIE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['POPULATION'] !== null ? autolinker.link(feature.properties['POPULATION'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['DEPARTEMEN'] !== null ? autolinker.link(feature.properties['DEPARTEMEN'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['REGION'] !== null ? autolinker.link(feature.properties['REGION'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Shape_Leng'] !== null ? autolinker.link(feature.properties['Shape_Leng'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Shape_Area'] !== null ? autolinker.link(feature.properties['Shape_Area'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Arrondisse</th>\
+                        <td>' + (feature.properties['Arrondisse'] !== null ? autolinker.link(feature.properties['Arrondisse'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['DensitÃ©'] !== null ? autolinker.link(feature.properties['DensitÃ©'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_regiondelest_1_0() {
+            return {
+                pane: 'pane_regiondelest_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,255,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_regiondelest_1');
+        map.getPane('pane_regiondelest_1').style.zIndex = 401;
+        map.getPane('pane_regiondelest_1').style['mix-blend-mode'] = 'normal';
+        var layer_regiondelest_1 = new L.geoJson(json_regiondelest_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_regiondelest_1',
+            layerName: 'layer_regiondelest_1',
+            pane: 'pane_regiondelest_1',
+            onEachFeature: pop_regiondelest_1,
+            style: style_regiondelest_1_0,
+        });
+        bounds_group.addLayer(layer_regiondelest_1);
+        map.addLayer(layer_regiondelest_1);
+        function pop_zonneminiere_2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['OBJECTID'] !== null ? autolinker.link(feature.properties['OBJECTID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Nom_permis'] !== null ? autolinker.link(feature.properties['Nom_permis'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Type_mine</th>\
+                        <td>' + (feature.properties['Type_mine'] !== null ? autolinker.link(feature.properties['Type_mine'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Statut'] !== null ? autolinker.link(feature.properties['Statut'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Region</th>\
+                        <td>' + (feature.properties['Region'] !== null ? autolinker.link(feature.properties['Region'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Departemen'] !== null ? autolinker.link(feature.properties['Departemen'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Commune'] !== null ? autolinker.link(feature.properties['Commune'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Attributio'] !== null ? autolinker.link(feature.properties['Attributio'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Expiration'] !== null ? autolinker.link(feature.properties['Expiration'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Observatio'] !== null ? autolinker.link(feature.properties['Observatio'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Shape_Leng'] !== null ? autolinker.link(feature.properties['Shape_Leng'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Shape_Area'] !== null ? autolinker.link(feature.properties['Shape_Area'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Superficie'] !== null ? autolinker.link(feature.properties['Superficie'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_zonneminiere_2_0(feature) {
+            switch(String(feature.properties['Type_mine'])) {
+                case 'au':
+                    return {
+                pane: 'pane_zonneminiere_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(232,96,203,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'au et substances polymetalliques':
+                    return {
+                pane: 'pane_zonneminiere_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(138,102,227,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'au, ag, cu, pb, zn, u, diamant, pt':
+                    return {
+                pane: 'pane_zonneminiere_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(227,196,58,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'au, diamant':
+                    return {
+                pane: 'pane_zonneminiere_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(177,117,233,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Au, diamant':
+                    return {
+                pane: 'pane_zonneminiere_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(127,164,218,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'au, diamant, substances connexes':
+                    return {
+                pane: 'pane_zonneminiere_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(18,49,205,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'au, fer, u, métaux de base':
+                    return {
+                pane: 'pane_zonneminiere_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(161,12,210,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'au, ni, co, substances connexes':
+                    return {
+                pane: 'pane_zonneminiere_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(104,97,209,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'au, substances connexes':
+                    return {
+                pane: 'pane_zonneminiere_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(236,58,76,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'co, ni':
+                    return {
+                pane: 'pane_zonneminiere_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(201,141,106,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'co, ni, au, u':
+                    return {
+                pane: 'pane_zonneminiere_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(40,232,123,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'diamant':
+                    return {
+                pane: 'pane_zonneminiere_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(121,211,181,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Diamant':
+                    return {
+                pane: 'pane_zonneminiere_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(201,145,60,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'fer':
+                    return {
+                pane: 'pane_zonneminiere_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(237,140,125,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'fer, substances connexes':
+                    return {
+                pane: 'pane_zonneminiere_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(71,228,18,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'fer,u, au':
+                    return {
+                pane: 'pane_zonneminiere_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(199,206,65,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'ni, co':
+                    return {
+                pane: 'pane_zonneminiere_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(202,101,135,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'or':
+                    return {
+                pane: 'pane_zonneminiere_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(66,215,95,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'or, diamant':
+                    return {
+                pane: 'pane_zonneminiere_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(26,207,192,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Or, diamant':
+                    return {
+                pane: 'pane_zonneminiere_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(97,174,219,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'or, nickel, cobalt':
+                    return {
+                pane: 'pane_zonneminiere_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(207,18,210,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'or, substances polymétalliques':
+                    return {
+                pane: 'pane_zonneminiere_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(217,20,132,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'or, subtance polymétalliques':
+                    return {
+                pane: 'pane_zonneminiere_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(207,237,130,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'uranium':
+                    return {
+                pane: 'pane_zonneminiere_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(43,217,37,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'uranium, au':
+                    return {
+                pane: 'pane_zonneminiere_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(170,226,117,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_zonneminiere_2');
+        map.getPane('pane_zonneminiere_2').style.zIndex = 402;
+        map.getPane('pane_zonneminiere_2').style['mix-blend-mode'] = 'normal';
+        var layer_zonneminiere_2 = new L.geoJson(json_zonneminiere_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_zonneminiere_2',
+            layerName: 'layer_zonneminiere_2',
+            pane: 'pane_zonneminiere_2',
+            onEachFeature: pop_zonneminiere_2,
+            style: style_zonneminiere_2_0,
+        });
+        bounds_group.addLayer(layer_zonneminiere_2);
+        map.addLayer(layer_zonneminiere_2);
+        var osmGeocoder = new L.Control.Geocoder({
+            collapsed: true,
+            position: 'topleft',
+            text: 'Search',
+            title: 'Testing'
+        }).addTo(map);
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .className += ' fa fa-search';
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .title += 'Search for a place';
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'zonne miniere<br /><table><tr><td style="text-align: center;"><img src="legend/zonneminiere_2_au0.png" /></td><td>au</td></tr><tr><td style="text-align: center;"><img src="legend/zonneminiere_2_auetsubstancespolymetalliques1.png" /></td><td>au et substances polymetalliques</td></tr><tr><td style="text-align: center;"><img src="legend/zonneminiere_2_auagcupbznudiamantpt2.png" /></td><td>au, ag, cu, pb, zn, u, diamant, pt</td></tr><tr><td style="text-align: center;"><img src="legend/zonneminiere_2_audiamant3.png" /></td><td>au, diamant</td></tr><tr><td style="text-align: center;"><img src="legend/zonneminiere_2_Audiamant4.png" /></td><td>Au, diamant</td></tr><tr><td style="text-align: center;"><img src="legend/zonneminiere_2_audiamantsubstancesconnexes5.png" /></td><td>au, diamant, substances connexes</td></tr><tr><td style="text-align: center;"><img src="legend/zonneminiere_2_auferumétauxdebase6.png" /></td><td>au, fer, u, métaux de base</td></tr><tr><td style="text-align: center;"><img src="legend/zonneminiere_2_aunicosubstancesconnexes7.png" /></td><td>au, ni, co, substances connexes</td></tr><tr><td style="text-align: center;"><img src="legend/zonneminiere_2_ausubstancesconnexes8.png" /></td><td>au, substances connexes</td></tr><tr><td style="text-align: center;"><img src="legend/zonneminiere_2_coni9.png" /></td><td>co, ni</td></tr><tr><td style="text-align: center;"><img src="legend/zonneminiere_2_coniauu10.png" /></td><td>co, ni, au, u</td></tr><tr><td style="text-align: center;"><img src="legend/zonneminiere_2_diamant11.png" /></td><td>diamant</td></tr><tr><td style="text-align: center;"><img src="legend/zonneminiere_2_Diamant12.png" /></td><td>Diamant</td></tr><tr><td style="text-align: center;"><img src="legend/zonneminiere_2_fer13.png" /></td><td>fer</td></tr><tr><td style="text-align: center;"><img src="legend/zonneminiere_2_fersubstancesconnexes14.png" /></td><td>fer, substances connexes</td></tr><tr><td style="text-align: center;"><img src="legend/zonneminiere_2_feruau15.png" /></td><td>fer,u, au</td></tr><tr><td style="text-align: center;"><img src="legend/zonneminiere_2_nico16.png" /></td><td>ni, co</td></tr><tr><td style="text-align: center;"><img src="legend/zonneminiere_2_or17.png" /></td><td>or</td></tr><tr><td style="text-align: center;"><img src="legend/zonneminiere_2_ordiamant18.png" /></td><td>or, diamant</td></tr><tr><td style="text-align: center;"><img src="legend/zonneminiere_2_Ordiamant19.png" /></td><td>Or, diamant</td></tr><tr><td style="text-align: center;"><img src="legend/zonneminiere_2_ornickelcobalt20.png" /></td><td>or, nickel, cobalt</td></tr><tr><td style="text-align: center;"><img src="legend/zonneminiere_2_orsubstancespolymétalliques21.png" /></td><td>or, substances polymétalliques</td></tr><tr><td style="text-align: center;"><img src="legend/zonneminiere_2_orsubtancepolymétalliques22.png" /></td><td>or, subtance polymétalliques</td></tr><tr><td style="text-align: center;"><img src="legend/zonneminiere_2_uranium23.png" /></td><td>uranium</td></tr><tr><td style="text-align: center;"><img src="legend/zonneminiere_2_uraniumau24.png" /></td><td>uranium, au</td></tr></table>': layer_zonneminiere_2,'<img src="legend/regiondelest_1.png" /> region de l\'est': layer_regiondelest_1,"OSM Standard": layer_OSMStandard_0,}).addTo(map);
+        setBounds();
+        var i = 0;
+        layer_regiondelest_1.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['Arrondisse'] !== null?String('<div style="color: #000000; font-size: 10pt; font-family: \'Times New Roman\', sans-serif;">' + layer.feature.properties['Arrondisse']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_regiondelest_1'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        map.addControl(new L.Control.Search({
+            layer: layer_zonneminiere_2,
+            initial: false,
+            hideMarkerOnCollapse: true,
+            propertyName: 'Type_mine'}));
+        document.getElementsByClassName('search-button')[0].className +=
+         ' fa fa-binoculars';
+        var mapDiv = document.getElementById('map');
+        var row = document.createElement('div');
+        row.className="row";
+        row.id="all";
+        row.style.height = "100%";
+        var col1 = document.createElement('div');
+        col1.className="col9";
+        col1.id = "mapWindow";
+        col1.style.height = "99%";
+        col1.style.width = "80%";
+        col1.style.display = "inline-block";
+        var col2 = document.createElement('div');
+        col2.className="col3";
+        col2.id = "menu";
+        col2.style.display = "inline-block";
+        mapDiv.parentNode.insertBefore(row, mapDiv);
+        document.getElementById("all").appendChild(col1);
+        document.getElementById("all").appendChild(col2);
+        col1.appendChild(mapDiv)
+        var Filters = {"Type_mine": "str"};
+        function filterFunc() {
+          map.eachLayer(function(lyr){
+          if ("options" in lyr && "dataVar" in lyr["options"]){
+            features = this[lyr["options"]["dataVar"]].features.slice(0);
+            try{
+              for (key in Filters){
+                keyS = key.replace(/[^a-zA-Z0-9_]/g, "")
+                if (Filters[key] == "str" || Filters[key] == "bool"){
+                  var selection = [];
+                  var options = document.getElementById("sel_" + keyS).options
+                  for (var i=0; i < options.length; i++) {
+                    if (options[i].selected) selection.push(options[i].value);
+                  }
+                    try{
+                      if (key in features[0].properties){
+                        for (i = features.length - 1;
+                          i >= 0; --i){
+                          if (selection.indexOf(
+                          features[i].properties[key])<0
+                          && selection.length>0) {
+                          features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                  }
+                }
+                if (Filters[key] == "int"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (parseInt(features[i].properties[key])
+                          < sliderVals[0]
+                          || parseInt(features[i].properties[key])
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "real"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (features[i].properties[key]
+                          < sliderVals[0]
+                          || features[i].properties[key]
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "date"
+                  || Filters[key] == "datetime"
+                  || Filters[key] == "time"){
+                  try{
+                    if (key in features[0].properties){
+                      HTMLkey = key.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/g, '');
+                      startdate = document.getElementById("dat_" +
+                        HTMLkey + "_date1").value.replace(" ", "T");
+                      enddate = document.getElementById("dat_" +
+                        HTMLkey + "_date2").value.replace(" ", "T");
+                      for (i = features.length - 1; i >= 0; --i){
+                        if (features[i].properties[key] < startdate
+                          || features[i].properties[key] > enddate){
+                          features.splice(i,1);
+                        }
+                      }
+                    }
+                  } catch(err){
+                  }
+                }
+              }
+            } catch(err){
+            }
+          this[lyr["options"]["layerName"]].clearLayers();
+          this[lyr["options"]["layerName"]].addData(features);
+        var i = 0;
+        layer_regiondelest_1.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['Arrondisse'] !== null?String('<div style="color: #000000; font-size: 10pt; font-family: \'Times New Roman\', sans-serif;">' + layer.feature.properties['Arrondisse']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_regiondelest_1'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+          }
+          })
+        }
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_Type_mine = document.createElement('div');
+            div_Type_mine.id = "div_Type_mine";
+            div_Type_mine.className= "filterselect";
+            document.getElementById("menu").appendChild(div_Type_mine);
+            sel_Type_mine = document.createElement('select');
+            sel_Type_mine.multiple = true;
+            sel_Type_mine.size = 10;
+            sel_Type_mine.id = "sel_Type_mine";
+            var Type_mine_options_str = "<option value='' unselected></option>";
+            sel_Type_mine.onchange = function(){filterFunc()};
+            Type_mine_options_str  += '<option value="NULL">NULL</option>';
+            Type_mine_options_str  += '<option value="Au, diamant">Au, diamant</option>';
+            Type_mine_options_str  += '<option value="Diamant">Diamant</option>';
+            Type_mine_options_str  += '<option value="Or, diamant">Or, diamant</option>';
+            Type_mine_options_str  += '<option value="au">au</option>';
+            Type_mine_options_str  += '<option value="au et substances polymetalliques">au et substances polymetalliques</option>';
+            Type_mine_options_str  += '<option value="au, ag, cu, pb, zn, u, diamant, pt">au, ag, cu, pb, zn, u, diamant, pt</option>';
+            Type_mine_options_str  += '<option value="au, diamant">au, diamant</option>';
+            Type_mine_options_str  += '<option value="au, diamant, substances connexes">au, diamant, substances connexes</option>';
+            Type_mine_options_str  += '<option value="au, fer, u, métaux de base">au, fer, u, métaux de base</option>';
+            Type_mine_options_str  += '<option value="au, ni, co, substances connexes">au, ni, co, substances connexes</option>';
+            Type_mine_options_str  += '<option value="au, substances connexes">au, substances connexes</option>';
+            Type_mine_options_str  += '<option value="co, ni">co, ni</option>';
+            Type_mine_options_str  += '<option value="co, ni, au, u">co, ni, au, u</option>';
+            Type_mine_options_str  += '<option value="diamant">diamant</option>';
+            Type_mine_options_str  += '<option value="fer">fer</option>';
+            Type_mine_options_str  += '<option value="fer, substances connexes">fer, substances connexes</option>';
+            Type_mine_options_str  += '<option value="fer,u, au">fer,u, au</option>';
+            Type_mine_options_str  += '<option value="ni, co">ni, co</option>';
+            Type_mine_options_str  += '<option value="or">or</option>';
+            Type_mine_options_str  += '<option value="or, diamant">or, diamant</option>';
+            Type_mine_options_str  += '<option value="or, nickel, cobalt">or, nickel, cobalt</option>';
+            Type_mine_options_str  += '<option value="or, substances polymétalliques">or, substances polymétalliques</option>';
+            Type_mine_options_str  += '<option value="or, subtance polymétalliques">or, subtance polymétalliques</option>';
+            Type_mine_options_str  += '<option value="uranium">uranium</option>';
+            Type_mine_options_str  += '<option value="uranium, au">uranium, au</option>';
+            sel_Type_mine.innerHTML = Type_mine_options_str;
+            div_Type_mine.appendChild(sel_Type_mine);
+            var lab_Type_mine = document.createElement('div');
+            lab_Type_mine.innerHTML = 'Type_mine';
+            lab_Type_mine.className = 'filterlabel';
+            div_Type_mine.appendChild(lab_Type_mine);
+            var reset_Type_mine = document.createElement('div');
+            reset_Type_mine.innerHTML = 'clear filter';
+            reset_Type_mine.className = 'filterlabel';
+            reset_Type_mine.onclick = function() {
+                var options = document.getElementById("sel_Type_mine").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_Type_mine.appendChild(reset_Type_mine);
+        resetLabels([layer_regiondelest_1]);
+        map.on("zoomend", function(){
+            resetLabels([layer_regiondelest_1]);
+        });
+        map.on("layeradd", function(){
+            resetLabels([layer_regiondelest_1]);
+        });
+        map.on("layerremove", function(){
+            resetLabels([layer_regiondelest_1]);
+        });
+        </script>
+    </body>
+</html>
